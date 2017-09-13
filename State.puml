@@ -1,0 +1,23 @@
+@startuml
+
+skinparam monochrome true
+skinparam style strictuml
+
+state UserActor {
+  [*] --> RegistrationStarted
+  RegistrationStarted --> RegistrationFailed
+  RegistrationStarted --> RegistrationSucceeded
+  RegistrationSucceeded --> ChangeEmailStarted
+  RegistrationSucceeded --> ChangeEmailFailed
+  ChangeEmailStarted --> NewEmailCreated
+  NewEmailCreated --> OldEmailDeleted
+  OldEmailDeleted --> ChangeEmailSucceeded
+}
+
+state EmailActor {
+  [*] --> EmailCreated
+  EmailCreated --> EmailDeleted
+  EmailDeleted --> EmailCreated
+}
+
+@enduml

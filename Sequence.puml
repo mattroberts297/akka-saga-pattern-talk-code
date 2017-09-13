@@ -1,0 +1,43 @@
+@startuml
+
+skinparam monochrome true
+skinparam style strictuml
+
+actor Client
+boundary API
+control UserActor
+database UserJournal
+control EmailActor
+database EmailJournal
+
+Client -> API : POST /register
+API ->> UserActor : Register
+
+alt
+
+UserActor -> UserJournal : RegistrationStarted
+UserActor ->> EmailActor : CreateEmail
+EmailActor -> EmailJournal : EmailCreated
+UserActor <<-- EmailActor : EmailCreated
+UserActor -> UserJournal : RegistrationSucceeded
+API <<-- UserActor : RegistrationSucceeded
+Client <- API : 200 OK
+
+else
+
+UserActor -> UserJournal : RegistrationStarted
+UserActor ->> EmailActor : CreateEmail
+UserActor <<-- EmailActor : EmailAlreadyExists
+UserActor -> UserJournal : RegistrationFailed
+API <<-- UserActor : RegistrationFailed
+Client <- API : 400 Bad Request
+
+else
+
+UserActor ->x UserJournal : RegistrationStarted
+API <<-- UserActor : _
+Client <- API : 500 Internal Server Error
+
+end
+
+@enduml
